@@ -3,3 +3,5 @@ export type LoginApi = (credentials: { email: string; password: string }) => Pro
   data?: any
   error?: string
 }>
+
+export type SetTokenApi = (token: string) => void

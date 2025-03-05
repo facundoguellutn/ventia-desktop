@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import ventiaLogo from './ventiaLogotipo.png'
+import { useNavigate } from 'react-router-dom' 
 
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +28,9 @@ const formSchema = z.object({
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [loginError, setLoginError] = useState('')
+  const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,16 +41,25 @@ export function LoginForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true)
+    setLoginError('')
     try {
       const result = await window.context.login(values)
       console.log('Respuesta del servidor:', result)
       if (result.success) {
         console.log('Login exitoso')
+        await window.context.setToken(result?.data?.token)
+        console.log('Token establecido correctamente')
+        navigate('/dashboard')
       } else {
-        console.error('Error en el login:', result.error)
+        setLoginError('Credenciales inválidas. Por favor revise el usuario o contraseña ingresados.')
+        console.error('Error en el login:', result)
       }
     } catch (error) {
+      setLoginError('Credenciales inválidas. Por favor revise el usuario o contraseña ingresados.')
       console.error('Error al iniciar sesión:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -111,8 +124,21 @@ export function LoginForm() {
                 )}
               />
 
-              <Button type="submit" className="w-full">
-                Ingresar
+              {loginError && (
+                <div className="text-sm text-red-500 bg-red-50 p-3 rounded-md">
+                  {loginError}
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Ingresando...
+                  </>
+                ) : (
+                  'Ingresar'
+                )}
               </Button>
             </form>
           </Form>

@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { autoUpdater } from 'electron-updater';
-import { login } from './lib';
+import { login, setToken } from './lib';
 
 
 function createWindow(): void {
@@ -16,7 +16,7 @@ function createWindow(): void {
     icon, // Esto mostrará el icono en todas las plataformas
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: true,
+      sandbox: false,
       contextIsolation: true,
     }
   })
@@ -82,6 +82,7 @@ app.whenReady().then(() => {
 
   // Manejador IPC para el login
   ipcMain.handle('login', async (_, credentials) => login(credentials))
+  ipcMain.handle('setToken', async (_, token) => setToken(token))
 
   createWindow()
 

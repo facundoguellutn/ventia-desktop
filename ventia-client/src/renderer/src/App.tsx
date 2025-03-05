@@ -1,13 +1,17 @@
-import { LoginForm } from "./components/login/LoginForm"
-import { Button } from "./components/ui/button"
-
+import Dashboard from './components/dashboard/Dashboard'
+import { LoginForm } from './components/login/LoginForm'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App(): JSX.Element {
-
   return (
-    <div className="w-full h-screen">
-      <LoginForm />
-    </div>
+    <Router>
+      <div className="w-full h-screen">
+        <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 

@@ -5,7 +5,8 @@ declare global {
   interface Window {
     // electron: ElectronAPI
     context: {
-      login: LoginApi
+      login: LoginApi,
+      setToken: SetTokenApi
     }
   }
 }

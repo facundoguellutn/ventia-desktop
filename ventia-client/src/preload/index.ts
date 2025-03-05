@@ -6,8 +6,9 @@ if (!process.contextIsolated) {
 
 try {
   contextBridge.exposeInMainWorld('context', {
-    login: (credentials: { email: string; password: string }) => 
-      ipcRenderer.invoke('login', credentials)
+    login: (credentials: { email: string; password: string }) =>
+      ipcRenderer.invoke('login', credentials),
+    setToken: (token: string) => ipcRenderer.invoke('setToken', token)
   })
 } catch (e) {
   console.error(e)
