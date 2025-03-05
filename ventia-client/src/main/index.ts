@@ -1,7 +1,10 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, session } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { autoUpdater } from 'electron-updater';
+import { login } from './lib';
+
 
 function createWindow(): void {
   // Create the browser window.
@@ -34,6 +37,7 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
 }
 
 // This method will be called when Electron has finished
@@ -52,6 +56,32 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+  // Configuración del autoUpdater
+  autoUpdater.checkForUpdatesAndNotify()
+
+  autoUpdater.on('update-available', () => {
+    console.log('Nueva actualización disponible.')
+  })
+
+  autoUpdater.on('update-not-available', () => {
+    console.log('No hay actualizaciones disponibles.')
+  })
+
+  autoUpdater.on('error', (err) => {
+    console.error('Error al buscar actualizaciones:', err)
+  })
+
+  autoUpdater.on('download-progress', (progressObj) => {
+    console.log(`Progreso de descarga: ${Math.round(progressObj.percent)}%`)
+  })
+
+  autoUpdater.on('update-downloaded', () => {
+    console.log('Actualización descargada. La aplicación se reiniciará para instalar la nueva versión.')
+    autoUpdater.quitAndInstall()
+  })
+
+  // Manejador IPC para el login
+  ipcMain.handle('login', async (_, credentials) => login(credentials))
 
   createWindow()
 

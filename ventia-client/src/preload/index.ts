@@ -6,7 +6,8 @@ if (!process.contextIsolated) {
 
 try {
   contextBridge.exposeInMainWorld('context', {
-    //TODO: Add API here
+    login: (credentials: { email: string; password: string }) => 
+      ipcRenderer.invoke('login', credentials)
   })
 } catch (e) {
   console.error(e)
