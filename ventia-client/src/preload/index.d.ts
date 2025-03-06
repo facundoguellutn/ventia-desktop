@@ -1,12 +1,13 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { LoginApi } from '../shared/types'
+import { GetTokenApi, LoginApi, SetTokenApi } from '../shared/types'
 
 declare global {
   interface Window {
     // electron: ElectronAPI
     context: {
       login: LoginApi,
-      setToken: SetTokenApi
+      setToken: SetTokenApi,
+      getToken: GetTokenApi
     }
   }
 }

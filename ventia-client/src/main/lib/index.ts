@@ -1,4 +1,4 @@
-import { LoginApi, SetTokenApi } from '@shared/types'
+import { GetTokenApi, LoginApi, SetTokenApi } from '@shared/types'
 import { session } from 'electron'
 
 export const login: LoginApi = async (credentials) => {
@@ -36,5 +36,15 @@ export const setToken: SetTokenApi = async (token) => {
     console.log('Token establecido correctamente')
   } catch (error: any) {
     console.error('Error al establecer el token:', error)
+  }
+}
+
+export const getToken: GetTokenApi = async () => {
+  try {
+    const cookies = await session.defaultSession.cookies.get({ name: 'token' })
+    return cookies.length ? cookies[0].value : null
+  } catch (error: any) {
+    console.error('Error al establecer el token:', error)
+    return null
   }
 }

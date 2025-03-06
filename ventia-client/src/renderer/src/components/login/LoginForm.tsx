@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import ventiaLogo from './ventiaLogotipo.png'
-import { useNavigate } from 'react-router-dom' 
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -48,11 +48,14 @@ export function LoginForm() {
       console.log('Respuesta del servidor:', result)
       if (result.success) {
         console.log('Login exitoso')
-        await window.context.setToken(result?.data?.token)
-        console.log('Token establecido correctamente')
-        navigate('/dashboard')
+        // await window.context.setToken(result?.data?.token)
+        console.log('Redirigiendo')
+
+        navigate('/floating-modal')
       } else {
-        setLoginError('Credenciales inválidas. Por favor revise el usuario o contraseña ingresados.')
+        setLoginError(
+          'Credenciales inválidas. Por favor revise el usuario o contraseña ingresados.'
+        )
         console.error('Error en el login:', result)
       }
     } catch (error) {
@@ -100,7 +103,11 @@ export function LoginForm() {
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input type={showPassword ? 'text' : 'password'} {...field} placeholder="********" />
+                        <Input
+                          type={showPassword ? 'text' : 'password'}
+                          {...field}
+                          placeholder="********"
+                        />
                         <Button
                           type="button"
                           variant="ghost"
@@ -125,9 +132,7 @@ export function LoginForm() {
               />
 
               {loginError && (
-                <div className="text-sm text-red-500 bg-red-50 p-3 rounded-md">
-                  {loginError}
-                </div>
+                <div className="text-sm text-red-500 bg-red-50 p-3 rounded-md">{loginError}</div>
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
@@ -153,7 +158,6 @@ export function LoginForm() {
           </div>
         </div>
       </div>
-      <div className="hidden flex-1 bg-primary md:block" />
     </div>
   )
 }
