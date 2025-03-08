@@ -1,5 +1,5 @@
 import { ElectronAPI } from '@electron-toolkit/preload'
-import { GetTokenApi, LoginApi, SetTokenApi } from '../shared/types'
+import { GetTokenApi, LoginApi, SetTokenApi,CloseFloatingModalApi } from '../shared/types'
 
 declare global {
   interface Window {
@@ -7,7 +7,9 @@ declare global {
     context: {
       login: LoginApi,
       setToken: SetTokenApi,
-      getToken: GetTokenApi
+      getToken: GetTokenApi,
+      openFloatingModal: OpenFloatingModalApi,
+      closeFloatingModal: CloseFloatingModalApi
     }
   }
 }

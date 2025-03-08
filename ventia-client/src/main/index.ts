@@ -15,6 +15,7 @@ function createWindow({ maximized = false } = {}) {
     height: maximized ? height : 700,
     resizable: maximized,
     fullscreen: false,
+    titleBarStyle: 'hidden',
     show: false,
     autoHideMenuBar: true,
     icon,
@@ -88,29 +89,39 @@ app.whenReady().then(() => {
       // Obtener el tamaño de pantalla
       const { width, height } = screen.getPrimaryDisplay().workAreaSize
 
-      // Crear la ventana principal que carga el contenido
+      mainWindow.setResizable(false)
+      mainWindow.setAlwaysOnTop(true, 'screen-saver')
+
       mainWindow.setBounds({
-        width: width * 0.3, // 30% del ancho de pantalla
-        height: 400,
-        x: 0, // Aparece a la izquierda
-        y: 0,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: false,
+        autoHideMenuBar: true,
+        show: false,
+        width: 40, // 30% del ancho de pantalla
+        height: 90,
+        x: width - 40, // Desplazado a la derecha (60% desde la izquierda)
+        y: (height - 90) / 2, // Centrado verticalmente
         frame: false, // Sin borde
         alwaysOnTop: true,
+        resizable: false,
         transparent: true,
+        hasShadow: false,
+        menuBarVisible: false,
         webPreferences: {
           nodeIntegration: true,
           contextIsolation: false
         }
       })
 
-      // Crear la ventana flotante (el modal negro a la izquierda)
       floatingModal = new BrowserWindow({
         x: 0,
         y: 0,
         width,
-        height
+        height,
+        autoHideMenuBar: true,
+        title: 'Ventia'
       })
-      floatingModal.center();
+      floatingModal.center()
 
       floatingModal.loadURL(`https://panel.getventia.com/login?token=${token}`)
       floatingModal.show()
@@ -127,6 +138,55 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('getToken', async () => getToken())
+
+  ipcMain.handle('openFloatingModal', async () => {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize
+    mainWindow.setBounds({
+      titleBarStyle: 'hidden',
+      titleBarOverlay: false,
+      autoHideMenuBar: true,
+      show: false,
+      width: Math.floor(width * 0.3), // 30% del ancho de pantalla
+      height: Math.floor(height * 0.7), // 90% del alto
+      x: Math.floor(width * 0.7), // 70% desde la izquierda
+      y: (height - Math.floor(height * 0.7)) / 2, // Centrado verticalmente
+      frame: false, // Sin borde
+      alwaysOnTop: true,
+      resizable: false,
+      transparent: true,
+      hasShadow: false,
+      menuBarVisible: false,
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false
+      }
+    })
+  })
+
+  ipcMain.handle('closeFloatingModal', async () => {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize
+
+    mainWindow.setBounds({
+      titleBarStyle: 'hidden',
+      titleBarOverlay: false,
+      autoHideMenuBar: true,
+      show: false,
+      width: 40, // 30% del ancho de pantalla
+      height: 90,
+      x: width - 40, // Desplazado a la derecha (60% desde la izquierda)
+      y: (height - 90) / 2, // Centrado verticalmente
+      frame: false, // Sin borde
+      alwaysOnTop: true,
+      resizable: false,
+      transparent: true,
+      hasShadow: false,
+      menuBarVisible: false,
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false
+      }
+    })
+  })
 
   createWindow()
 

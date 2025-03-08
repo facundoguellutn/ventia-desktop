@@ -9,7 +9,9 @@ try {
     login: (credentials: { email: string; password: string }) =>
       ipcRenderer.invoke('login', credentials),
     setToken: (token: string) => ipcRenderer.invoke('setToken', token),
-    getToken: () => ipcRenderer.invoke('getToken')
+    getToken: () => ipcRenderer.invoke('getToken'),
+    openFloatingModal: () => ipcRenderer.invoke('openFloatingModal'),
+    closeFloatingModal: () => ipcRenderer.invoke('closeFloatingModal')
   })
 } catch (e) {
   console.error(e)
