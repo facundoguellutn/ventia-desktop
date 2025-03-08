@@ -13,7 +13,7 @@ function createWindow({ maximized = false } = {}) {
   mainWindow = new BrowserWindow({
     width: maximized ? width : 600,
     height: maximized ? height : 700,
-    resizable: maximized,
+    resizable: false,
     fullscreen: false,
     titleBarStyle: 'hidden',
     show: false,
@@ -69,19 +69,7 @@ app.whenReady().then(() => {
   let floatingModal
 
   ipcMain.handle('login', async (_, credentials) => {
-    // const result = await login(credentials);
-    // if (result.success) {
 
-    //   const token = result?.data?.token;
-    //   await mainWindow.loadURL(`https://panel.getventia.com/login?token=${token}`);
-    //   const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-    //   mainWindow.setResizable(true);
-    //   mainWindow.setBounds({ x: 0, y: 0, width, height });
-    //   mainWindow.center();
-    //   createFloatingModal();
-
-    // }
-    // return result;
     const result = await login(credentials)
     if (result.success) {
       const token = result?.data?.token
@@ -119,10 +107,10 @@ app.whenReady().then(() => {
         width,
         height,
         autoHideMenuBar: true,
-        title: 'Ventia'
+        title: 'Ventia',
+        icon,
       })
       floatingModal.center()
-
       floatingModal.loadURL(`https://panel.getventia.com/login?token=${token}`)
       floatingModal.show()
     }

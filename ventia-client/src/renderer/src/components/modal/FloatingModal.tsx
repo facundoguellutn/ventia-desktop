@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Phone, ArrowLeft, Settings, Clock } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -25,6 +25,22 @@ const FloatingModal = () => {
     }
   }
 
+  useEffect(() => {
+    const handleKeyboardInput = (e) => {
+      if (activeTab === 'dialpad') {
+        const allowedKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#']
+        if (allowedKeys.includes(e.key)) {
+          handleKeyPress(e.key)
+        } else if (e.key === 'Backspace') {
+          handleKeyPress('delete')
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyboardInput)
+    return () => window.removeEventListener('keydown', handleKeyboardInput)
+  }, [activeTab])
+
   return (
     <div className="bg-black shadow-2xl w-full h-full flex flex-col justify-center items-center overflow-hidden">
       {!isOpen ? (
@@ -38,8 +54,14 @@ const FloatingModal = () => {
         </div>
       ) : (
         <div className="w-full h-full flex  bg-black">
-          <div className="text-white bg-slate-800 flex items-center justify-center h-full" onClick={handleClose}>
-            <div className="grid grid-cols-2 gap-1.5 cursor-pointer px-2 py-4 bg-black rounded-l-xl" onClick={handleOpen}>
+          <div
+            className="text-white bg-slate-800 flex items-center justify-center h-full"
+            onClick={handleClose}
+          >
+            <div
+              className="grid grid-cols-2 gap-1.5 cursor-pointer px-2 py-4 bg-black rounded-l-xl"
+              onClick={handleOpen}
+            >
               <div className="bg-white h-[6px] w-[6px] rounded-full"></div>
               <div className="bg-white h-[6px] w-[6px] rounded-full"></div>
               <div className="bg-white h-[6px] w-[6px] rounded-full"></div>
@@ -54,12 +76,15 @@ const FloatingModal = () => {
             value={activeTab}
             onValueChange={setActiveTab}
           >
-            <TabsList className="grid grid-cols-3 bg-black border-b border-gray-800 rounded-none h-auto p-0">
+            <TabsList className="grid grid-cols-3 bg-black border-b border-gray-800 rounded-none h-auto p-0 focus:outline-none ring-0">
               <TabsTrigger
                 value="dialpad"
                 className="data-[state=active]:bg-black data-[state=active]:text-white py-3 rounded-none"
               >
-                <span className="flex items-center gap-2">Dialpad</span>
+                <span className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  Dialpad
+                </span>
               </TabsTrigger>
               <TabsTrigger
                 value="recent"
@@ -85,6 +110,9 @@ const FloatingModal = () => {
               {/* Phone number display */}
               <div className="p-6 flex justify-center">
                 <h1 className="text-white text-3xl font-bold">{phoneNumber}</h1>
+                {!phoneNumber && (
+                  <p className="text-gray-500">Enter a phone number</p>
+                )}
               </div>
 
               {/* Keypad */}
@@ -117,10 +145,7 @@ const FloatingModal = () => {
               </div>
             </TabsContent>
 
-            <TabsContent
-              value="recent"
-              className=""
-            >
+            <TabsContent value="recent" className="">
               <div className="text-white text-center mt-10">
                 <Clock className="h-12 w-12 mx-auto mb-4 text-gray-500" />
                 <h3 className="text-xl font-medium mb-2">Recent Calls</h3>
@@ -128,10 +153,7 @@ const FloatingModal = () => {
               </div>
             </TabsContent>
 
-            <TabsContent
-              value="config"
-              className=""
-            >
+            <TabsContent value="config" className="">
               <div className="text-white text-center mt-10">
                 <Settings className="h-12 w-12 mx-auto mb-4 text-gray-500" />
                 <h3 className="text-xl font-medium mb-2">Configuration</h3>
