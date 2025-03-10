@@ -1,3 +1,5 @@
+import { Call } from "@shared/types";
+
 const { contextBridge, ipcRenderer } = require('electron')
 
 if (!process.contextIsolated) {
@@ -11,7 +13,9 @@ try {
     setToken: (token: string) => ipcRenderer.invoke('setToken', token),
     getToken: () => ipcRenderer.invoke('getToken'),
     openFloatingModal: () => ipcRenderer.invoke('openFloatingModal'),
-    closeFloatingModal: () => ipcRenderer.invoke('closeFloatingModal')
+    closeFloatingModal: () => ipcRenderer.invoke('closeFloatingModal'),
+    getCallHistory: () => ipcRenderer.invoke('getCallHistory'),
+    setCallHistory: (call: Call) => ipcRenderer.invoke('setCallHistory', call),
   })
 } catch (e) {
   console.error(e)

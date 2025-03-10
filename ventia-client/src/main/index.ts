@@ -3,7 +3,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { autoUpdater } from 'electron-updater'
-import { getToken, login, setToken } from './lib'
+import { getCallHistory, getToken, login, setCallHistory, setToken } from './lib'
 
 let mainWindow
 
@@ -45,6 +45,8 @@ function createWindow({ maximized = false } = {}) {
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
 
+  //Actualizar la app
+
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
@@ -66,6 +68,8 @@ app.whenReady().then(() => {
     autoUpdater.quitAndInstall()
   })
 
+
+  //Metodos de la app
   let floatingModal
 
   ipcMain.handle('login', async (_, credentials) => {
@@ -175,6 +179,10 @@ app.whenReady().then(() => {
       }
     })
   })
+
+  ipcMain.handle('getCallHistory', async () => getCallHistory())
+
+  ipcMain.handle('setCallHistory', async (_, call) => setCallHistory(call))
 
   createWindow()
 
