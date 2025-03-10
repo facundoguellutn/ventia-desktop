@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, screen } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { autoUpdater } from 'electron-updater'
 import { getCallHistory, getToken, login, setCallHistory, setToken } from './lib'
@@ -43,9 +43,16 @@ function createWindow({ maximized = false } = {}) {
 }
 
 app.whenReady().then(() => {
-  electronApp.setAppUserModelId('com.electron')
+  //electronApp.setAppUserModelId('com.electron')
 
   //Actualizar la app
+  console.log('Versión actual de la app:', app.getVersion())
+  autoUpdater.setFeedURL({
+    provider: 'github',
+    owner: 'facundoguellutn',
+    repo: 'ventia-desktop',
+    vPrefixedTagName: true
+  });
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
