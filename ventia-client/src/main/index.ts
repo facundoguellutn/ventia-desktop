@@ -1,6 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain, screen } from 'electron'
 import { join } from 'path'
-import { optimizer, is } from '@electron-toolkit/utils'
+import { optimizer, is, electronApp } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { autoUpdater } from 'electron-updater'
 import { getCallHistory, getToken, login, setCallHistory, setToken } from './lib'
@@ -35,6 +35,9 @@ function createWindow({ maximized = false } = {}) {
     return { action: 'deny' }
   })
 
+  // Habilitar las herramientas de desarrollo
+  //mainWindow.webContents.openDevTools()
+
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
@@ -43,16 +46,10 @@ function createWindow({ maximized = false } = {}) {
 }
 
 app.whenReady().then(() => {
-  //electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.electron')
 
   //Actualizar la app
   console.log('Versión actual de la app:', app.getVersion())
-  autoUpdater.setFeedURL({
-    provider: 'github',
-    owner: 'facundoguellutn',
-    repo: 'ventia-desktop',
-    vPrefixedTagName: true
-  });
 
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -75,12 +72,10 @@ app.whenReady().then(() => {
     autoUpdater.quitAndInstall()
   })
 
-
   //Metodos de la app
   let floatingModal
 
   ipcMain.handle('login', async (_, credentials) => {
-
     const result = await login(credentials)
     if (result.success) {
       const token = result?.data?.token
@@ -119,7 +114,7 @@ app.whenReady().then(() => {
         height,
         autoHideMenuBar: true,
         title: 'Ventia',
-        icon,
+        icon
       })
       floatingModal.center()
       floatingModal.loadURL(`https://panel.getventia.com/login?token=${token}`)

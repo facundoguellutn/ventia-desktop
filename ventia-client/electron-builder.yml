@@ -1,4 +1,4 @@
-appId: com.ventia.client
+appId: com.electron.app
 productName: ventia-client
 directories:
   buildResources: build
